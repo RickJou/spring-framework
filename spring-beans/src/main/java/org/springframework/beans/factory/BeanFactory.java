@@ -125,6 +125,9 @@ public interface BeanFactory {
 
 
 	/**
+	 * 返回指定bean的实例，该实例可以是共享的或独立的。此方法允许Spring BeanFactory用作Singleton或Prototype设计模式的替代。 
+	 * 在Singleton bean的情况下，调用者可以保留对返回对象的引用。 将别名转换回相应的规范bean名称。 
+	 * 在此工厂实例中找不到bean将询问父工厂是否存在。
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>This method allows a Spring BeanFactory to be used as a replacement for the
 	 * Singleton or Prototype design pattern. Callers may retain references to
@@ -140,6 +143,11 @@ public interface BeanFactory {
 	Object getBean(String name) throws BeansException;
 
 	/**
+	 * 返回指定bean的实例，该实例可以是共享的或独立的。
+	 * 行为与{@link #getBean（String）}相同，但如果bean不是所需类型，则通过抛出BeanNotOfRequiredTypeException来提供类型安全性度量。
+	 * 这意味着在正确转换结果时不能抛出ClassCastException，就像{@link #getBean（String）}一样。
+	 * 将别名转换回相应的规范bean名称。
+	 * 在此工厂实例中找不到bean将询问父工厂是否存在。
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>Behaves the same as {@link #getBean(String)}, but provides a measure of type
 	 * safety by throwing a BeanNotOfRequiredTypeException if the bean is not of the
@@ -215,6 +223,11 @@ public interface BeanFactory {
 
 
 	/**
+	 * 此bean工厂是否包含具有给定名称的bean定义或外部注册的单例实例？
+	 * 如果给定的名称是别名，则它将被转换回相应的规范bean名称。
+	 * 如果此工厂是分层的，则会询问任何父工厂是否在此工厂实例中找不到该bean。
+	 * 如果找到与给定名称匹配的bean定义或单例实例，则此方法将返回{@code true}，无论命名bean定义是具体还是抽象，懒惰或渴望，是否在范围内。 
+	 * 因此，请注意{@code true}  此方法的返回值不一定表示{@link #getBean}将能够获取同名的实例。
 	 * Does this bean factory contain a bean definition or externally registered singleton
 	 * instance with the given name?
 	 * <p>If the given name is an alias, it will be translated back to the corresponding
