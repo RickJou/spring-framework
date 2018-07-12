@@ -19,6 +19,8 @@ package org.springframework.beans.factory.config;
 import org.springframework.lang.Nullable;
 
 /**
+ * 为共享bean实例定义注册表的接口。
+ * 可以通过{@link org.springframework.beans.factory.BeanFactory}实现来实现，以便以统一的方式公开它们的单例管理工具。
  * Interface that defines a registry for shared bean instances.
  * Can be implemented by {@link org.springframework.beans.factory.BeanFactory}
  * implementations in order to expose their singleton management facility
@@ -35,6 +37,13 @@ import org.springframework.lang.Nullable;
 public interface SingletonBeanRegistry {
 
 	/**
+	 * 在给定的bean名称下，在bean注册表中将给定的现有对象注册为singleton。 假定给定的实例已完全初始化; 
+	 * 注册表不会执行任何初始化回调（特别是，它不会调用InitializingBean的{@code afterPropertiesSet}方法）。 
+	 * 给定的实例也不会收到任何销毁回调（如DisposableBean的{@code destroy}方法）。 
+	 * 在完整的BeanFactory中运行时：<b>如果bean应该接收初始化和/或销毁回调，则注册bean定义而不是现有实例。 
+	 * 通常在注册表配置期间调用，但也可用于单例的运行时注册。 因此，注册表实现应该同步单例访问; 
+	 * 如果它支持BeanFactory对单例的懒惰初始化，它将无论如何都必须这样做。
+	 * 
 	 * Register the given existing object as singleton in the bean registry,
 	 * under the given bean name.
 	 * <p>The given instance is supposed to be fully initialized; the registry
@@ -58,6 +67,11 @@ public interface SingletonBeanRegistry {
 	void registerSingleton(String beanName, Object singletonObject);
 
 	/**
+	 * 返回在给定名称下注册的（原始）单例对象。
+	 * <p>只检查已经实例化的单身人士; 不返回尚未实例化的单例bean定义的Object。
+	 * <p>此方法的主要目的是访问手动注册的单例（请参阅{@link #registerSingleton}）。 也可以用于以原始方式访问已经创建的bean定义定义的单例。
+	 * <p><b>注意：</ b>此查找方法不知道FactoryBean前缀或别名。
+  在获取单例实例之前，需要首先解析规范bean名称。
 	 * Return the (raw) singleton object registered under the given name.
 	 * <p>Only checks already instantiated singletons; does not return an Object
 	 * for singleton bean definitions which have not been instantiated yet.

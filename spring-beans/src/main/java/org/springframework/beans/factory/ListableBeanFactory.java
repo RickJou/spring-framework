@@ -24,6 +24,17 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 /**
+ * {@link BeanFactory}接口的扩展由bean工厂实现，可以枚举所有bean实例，而不是按客户端的请求逐个尝试按名称查找bean。
+ * 预加载所有bean定义（例如基于XML的工厂）的BeanFactory实现可以实现此接口。
+ * 如果这是{@link HierarchicalBeanFactory}，则返回值不会考虑任何BeanFactory层次结构，而只涉及当前工厂中定义的bean。
+ * 使用{@link BeanFactoryUtils}帮助程序类来考虑祖先工厂中的bean。
+ * 此接口中的方法将仅考虑此工厂的bean定义。
+ * 他们将忽略任何已通过其他方式注册的单例bean
+ * {@link org.springframework.beans.factory.config.ConfigurableBeanFactory}的{@code registerSingleton}方法，用{@code getBeanNamesOfType}
+ * 和{@code getBeansOfType}这将检查这些手动注册单身太除外。当然，BeanFactory的{@code getBean}也允许透明访问这些特殊的bean。
+ * 但是，在典型的场景中，所有bean都将由外部bean定义定义，因此大多数应用程序不需要担心这种区别。
+ * 注意：除了{@code getBeanDefinitionCount}和{@code containsBeanDefinition}之外，此接口中的方法不是为频繁调用而设计的。实施可能很慢。
+ * 
  * Extension of the {@link BeanFactory} interface to be implemented by bean factories
  * that can enumerate all their bean instances, rather than attempting bean lookup
  * by name one by one as requested by clients. BeanFactory implementations that
@@ -58,6 +69,8 @@ import org.springframework.lang.Nullable;
 public interface ListableBeanFactory extends BeanFactory {
 
 	/**
+	 * 检查此bean工厂是否包含具有给定名称的bean定义。
+	 * 不考虑此工厂可能参与的任何层次结构，并忽略已通过bean定义以外的其他方式注册的任何单例bean。
 	 * Check if this bean factory contains a bean definition with the given name.
 	 * <p>Does not consider any hierarchy this factory may participate in,
 	 * and ignores any singleton beans that have been registered by
@@ -69,6 +82,8 @@ public interface ListableBeanFactory extends BeanFactory {
 	boolean containsBeanDefinition(String beanName);
 
 	/**
+	 * 返回工厂中定义的bean数。
+	 * 不考虑此工厂可能参与的任何层次结构，并忽略已通过bean定义以外的其他方式注册的任何单例bean。
 	 * Return the number of beans defined in the factory.
 	 * <p>Does not consider any hierarchy this factory may participate in,
 	 * and ignores any singleton beans that have been registered by
@@ -78,6 +93,8 @@ public interface ListableBeanFactory extends BeanFactory {
 	int getBeanDefinitionCount();
 
 	/**
+	 * 返回此工厂中定义的所有bean的名称。
+	 * 不考虑此工厂可能参与的任何层次结构，并忽略已通过bean定义以外的其他方式注册的任何单例bean。
 	 * Return the names of all beans defined in this factory.
 	 * <p>Does not consider any hierarchy this factory may participate in,
 	 * and ignores any singleton beans that have been registered by
@@ -88,6 +105,11 @@ public interface ListableBeanFactory extends BeanFactory {
 	String[] getBeanDefinitionNames();
 
 	/**
+	 * 返回与给定类型（包括子类）匹配的bean的名称，从bean定义或FactoryBeans的{@code getObjectType}值判断。
+	 * 注意：此方法仅对顶级bean进行内省。它不会检查可能与指定类型匹配的嵌套bean。
+	 * 考虑FactoryBeans创建的对象，这意味着FactoryBeans
+	 * 将被初始化。如果FactoryBean创建的对象不匹配，原始FactoryBean本身将与该类型匹配。
+	 * 不考虑该工厂可能参与的任何层级。
 	 * Return the names of beans matching the given type (including subclasses),
 	 * judging from either bean definitions or the value of {@code getObjectType}
 	 * in the case of FactoryBeans.

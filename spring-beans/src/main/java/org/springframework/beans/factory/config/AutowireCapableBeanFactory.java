@@ -334,6 +334,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 			throws BeansException;
 
 	/**
+	 * 销毁给定的bean实例（通常来自{@link #createBean}），应用{@link org.springframework.beans.factory.DisposableBean}契约以及已注册的{@link DestructionAwareBeanPostProcessor DestructionAwareBeanPostProcessors}。
+	 * 应该捕获并记录在销毁期间出现的任何异常，而不是传播给此方法的调用方。
 	 * Destroy the given bean instance (typically coming from {@link #createBean}),
 	 * applying the {@link org.springframework.beans.factory.DisposableBean} contract as well as
 	 * registered {@link DestructionAwareBeanPostProcessor DestructionAwareBeanPostProcessors}.
@@ -349,6 +351,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	//-------------------------------------------------------------------------
 
 	/**
+	 * 解析与给定对象类型唯一匹配的bean实例（如果有），包括其bean名称。
+	 * 这实际上是{@link #getBean（Class）}的变体，它保留匹配实例的bean名称。
 	 * Resolve the bean instance that uniquely matches the given object type, if any,
 	 * including its bean name.
 	 * <p>This is effectively a variant of {@link #getBean(Class)} which preserves the
@@ -365,6 +369,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	<T> NamedBeanHolder<T> resolveNamedBean(Class<T> requiredType) throws BeansException;
 
 	/**
+	 * 针对此工厂中定义的bean解析指定的依赖项。
 	 * Resolve the specified dependency against the beans defined in this factory.
 	 * @param descriptor the descriptor for the dependency (field/method/constructor)
 	 * @param requestingBeanName the name of the bean which declares the given dependency
@@ -379,6 +384,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName) throws BeansException;
 
 	/**
+	 * 针对此工厂中定义的bean解析指定的依赖项。
 	 * Resolve the specified dependency against the beans defined in this factory.
 	 * @param descriptor the descriptor for the dependency (field/method/constructor)
 	 * @param requestingBeanName the name of the bean which declares the given dependency
