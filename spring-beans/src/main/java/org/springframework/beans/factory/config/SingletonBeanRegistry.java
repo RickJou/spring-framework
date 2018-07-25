@@ -37,7 +37,8 @@ import org.springframework.lang.Nullable;
 public interface SingletonBeanRegistry {
 
 	/**
-	 * 在给定的bean名称下，在bean注册表中将给定的现有对象注册为singleton。 假定给定的实例已完全初始化; 
+	 * 在给定的bean名称下，在bean注册表中将给定的现有对象注册为singleton。 
+	 * 假定给定的实例已完全初始化; 
 	 * 注册表不会执行任何初始化回调（特别是，它不会调用InitializingBean的{@code afterPropertiesSet}方法）。 
 	 * 给定的实例也不会收到任何销毁回调（如DisposableBean的{@code destroy}方法）。 
 	 * 在完整的BeanFactory中运行时：<b>如果bean应该接收初始化和/或销毁回调，则注册bean定义而不是现有实例。 
@@ -71,7 +72,7 @@ public interface SingletonBeanRegistry {
 	 * <p>只检查已经实例化的单身人士; 不返回尚未实例化的单例bean定义的Object。
 	 * <p>此方法的主要目的是访问手动注册的单例（请参阅{@link #registerSingleton}）。 也可以用于以原始方式访问已经创建的bean定义定义的单例。
 	 * <p><b>注意：</ b>此查找方法不知道FactoryBean前缀或别名。
-  在获取单例实例之前，需要首先解析规范bean名称。
+	 * 在获取单例实例之前，需要首先解析规范bean名称。
 	 * Return the (raw) singleton object registered under the given name.
 	 * <p>Only checks already instantiated singletons; does not return an Object
 	 * for singleton bean definitions which have not been instantiated yet.
@@ -88,6 +89,7 @@ public interface SingletonBeanRegistry {
 	Object getSingleton(String beanName);
 
 	/**
+	 * 检查此注册表是否包含具有给定名称的单例实例。
 	 * Check if this registry contains a singleton instance with the given name.
 	 * <p>Only checks already instantiated singletons; does not return {@code true}
 	 * for singleton bean definitions which have not been instantiated yet.
@@ -112,6 +114,7 @@ public interface SingletonBeanRegistry {
 	boolean containsSingleton(String beanName);
 
 	/**
+	 * 返回在此注册表中注册的单例bean的名称。
 	 * Return the names of singleton beans registered in this registry.
 	 * <p>Only checks already instantiated singletons; does not return names
 	 * for singleton bean definitions which have not been instantiated yet.
@@ -126,6 +129,7 @@ public interface SingletonBeanRegistry {
 	String[] getSingletonNames();
 
 	/**
+	 * 返回在此注册表中注册的单例bean的数量。
 	 * Return the number of singleton beans registered in this registry.
 	 * <p>Only checks already instantiated singletons; does not count
 	 * singleton bean definitions which have not been instantiated yet.
@@ -140,6 +144,7 @@ public interface SingletonBeanRegistry {
 	int getSingletonCount();
 
 	/**
+	 * 返回此注册表使用的单例互斥锁（对于外部协作者）。
 	 * Return the singleton mutex used by this registry (for external collaborators).
 	 * @return the mutex object (never {@code null})
 	 * @since 4.2

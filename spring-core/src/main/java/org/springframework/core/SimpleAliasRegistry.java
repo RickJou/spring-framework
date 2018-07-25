@@ -51,7 +51,9 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	public void registerAlias(String name, String alias) {
 		Assert.hasText(name, "'name' must not be empty");
 		Assert.hasText(alias, "'alias' must not be empty");
+		//以注册表对象为锁
 		synchronized (this.aliasMap) {
+			//如果别名等于名称,则移除注册表中以别名为key的entry
 			if (alias.equals(name)) {
 				this.aliasMap.remove(alias);
 				if (logger.isDebugEnabled()) {
@@ -60,20 +62,25 @@ public class SimpleAliasRegistry implements AliasRegistry {
 			}
 			else {
 				String registeredName = this.aliasMap.get(alias);
+				//存在别名为key的entry
 				if (registeredName != null) {
+					//如果别名又等同于name,则忽略(相当于注册一个name:a,alias:b;然后注册表中存在name:b,alias:others的记录,则不对别名b进行注册)
 					if (registeredName.equals(name)) {
 						// An existing alias - no need to re-register
 						return;
 					}
+					//不允许覆盖别名()默认一定为true
 					if (!allowAliasOverriding()) {
 						throw new IllegalStateException("Cannot define alias '" + alias + "' for name '" +
 								name + "': It is already registered for name '" + registeredName + "'.");
 					}
+					//输出别名覆盖日志
 					if (this.logger.isInfoEnabled()) {
 						logger.info("Overriding alias '" + alias + "' definition for registered name '" +
 								registeredName + "' with new target name '" + name + "'");
 					}
 				}
+				//检查别名是否已经被注册(循环注册)
 				checkForAliasCircle(name, alias);
 				this.aliasMap.put(alias, name);
 				if (logger.isDebugEnabled()) {
@@ -92,6 +99,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	}
 
 	/**
+	 * 确定给定名称是否已注册给定别名。
 	 * Determine whether the given name has the given alias registered.
 	 * @param name the name to check
 	 * @param alias the alias to look for
@@ -133,6 +141,8 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	}
 
 	/**
+	 * 递归检索给定名称的所有别名。
+	 * 如果给定一个别名A,那么查找别名为{B:A}的记录,然后将B作为别名获取{C:B}的记录,然后获取{D:C}的记录.直到获取到 B,C,D为止
 	 * Transitively retrieve all aliases for the given name.
 	 * @param name the target name to find aliases for
 	 * @param result the resulting aliases list
@@ -147,6 +157,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	}
 
 	/**
+	 * 解析在此工厂中注册的所有别名目标名称和别名，将给定的StringValueResolver应用于它们。
 	 * Resolve all alias target names and aliases registered in this
 	 * factory, applying the given StringValueResolver to them.
 	 * <p>The value resolver may for example resolve placeholders
@@ -188,6 +199,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	}
 
 	/**
+	 * 检查给定名称是否已指向另一个方向的别名作为别名，预先捕获循环引用并抛出相应的IllegalStateException。
 	 * Check whether the given name points back to the given alias as an alias
 	 * in the other direction already, catching a circular reference upfront
 	 * and throwing a corresponding IllegalStateException.
@@ -205,6 +217,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	}
 
 	/**
+	 * 确定原始名称，将别名解析为规范名称。
 	 * Determine the raw name, resolving aliases to canonical names.
 	 * @param name the user-specified name
 	 * @return the transformed name
